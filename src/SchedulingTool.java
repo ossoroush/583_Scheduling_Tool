@@ -69,9 +69,21 @@ public class SchedulingTool {
     // critical path algorithm
 	public void calculateCriticalPath() {
 		List<Task> currentTasks = finalTasks;
-		for (Task task : currentTasks) {
-			//TODO: implement this
-		}
+		Task criticalPathTask = null;
+
+		do {
+			for (Task task : currentTasks) {
+				if (task.getEarlyFinish() == task.getLatestFinish()) {
+					criticalPathTask = task;
+					break;
+				}
+			}
+			if (criticalPathTask != null) {
+				criticalPath.add(0, criticalPathTask);
+				currentTasks = criticalPathTask.getDependencies();
+			}
+		} while (criticalPathTask != null && !currentTasks.isEmpty());
+		
 	}
 
 	public void writeOutputs() {
@@ -98,6 +110,10 @@ public class SchedulingTool {
 
 	public List<Task> getFinalTasks() {
 		return finalTasks;
+	}
+
+	public List<Task> getCriticalPath() {
+		return criticalPath;
 	}
 
 	public int getTotalDuration() {

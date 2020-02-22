@@ -37,5 +37,32 @@ class Test {
 		for (Task task : tool.getFinalTasks()) {
 			System.out.println(task);
 		}
+
+		//temp: sets latest values until calculateLatest is implemented
+		a.setLatestStart(2);
+		a.setLatestFinish(8);
+		b.setLatestStart(3);
+		b.setLatestFinish(7);
+		c.setLatestStart(8);
+		c.setLatestFinish(11);
+		d.setLatestStart(7);
+		d.setLatestFinish(11);
+		e.setLatestStart(7);
+		e.setLatestFinish(10);
+		f.setLatestStart(0);
+		f.setLatestFinish(10);
+		g.setLatestStart(10);
+		g.setLatestFinish(13);
+		h.setLatestStart(11);
+		h.setLatestFinish(13);
+		//end temp
+
+		tool.calculateCriticalPath();
+
+		System.out.println("\n--CRITICAL PATH--");
+		for (Task task : tool.getCriticalPath()) {
+			System.out.println(task);
+		}
+
 	}
 }
