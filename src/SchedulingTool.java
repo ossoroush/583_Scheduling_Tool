@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class SchedulingTool {
 	// Array carrying all strings of tasks
 	// Desired inputs:
@@ -10,7 +12,7 @@ public class SchedulingTool {
 	// IT = Install and test
 	// UT = User training
 	
-	private Task[] tasks = {};
+	private ArrayList<Task> tasks = new ArrayList<>();
 
 	public void readInputs(String definitionFileName, String dependencyFileName) {
 		//Populate the task array "tasks" above

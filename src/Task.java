@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Task {
 	//--Entered values--
 	// name for the unique ID of the task
@@ -7,7 +9,7 @@ public class Task {
 	//  description of/for the task
 	private String description;
 	// tasks that must complete before this task begins
-	private Task[] dependencies = {};
+	private ArrayList<Task> dependencies = new ArrayList<>();
 
 	//--Calculated values--
     // the earliest start
@@ -31,7 +33,7 @@ public class Task {
 		this.duration = duration;
 	}
 
-	public Task(String uniqueID, String description, int duration, Task[] dependencies) {
+	public Task(String uniqueID, String description, int duration, ArrayList<Task> dependencies) {
 		this.uniqueID = uniqueID;
 		this.description = description;
 		this.duration = duration;
@@ -61,6 +63,10 @@ public class Task {
 	}
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ArrayList<Task> getDependencies() {
+        return dependencies;
     }
 	
 	public int getEarlyStart() {
