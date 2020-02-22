@@ -1,4 +1,7 @@
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class SchedulingTool {
 	// Array carrying all strings of tasks
@@ -12,14 +15,51 @@ public class SchedulingTool {
 	// IT = Install and test
 	// UT = User training
 	
-	private ArrayList<Task> tasks = new ArrayList<>();
+	private List<Task> tasks = new ArrayList<>();
+	private List<Task> finalTasks = new ArrayList<>();
+	private List<Task> criticalPath = new ArrayList<>();
+	private int totalDuration = 0;
 
 	public void readInputs(String definitionFileName, String dependencyFileName) {
 		//Populate the task array "tasks" above
 	}
 
+	//calculates earliest start/end times, populates a list of final tasks, and total duration of project
 	public void calculateEarly() {
-		//russell's algorithm here
+		Deque<Task> dependencyQueue = new LinkedList<>();
+		Task currentDependency = null;
+		int earliestStartTime = 0;
+		int projectDuration = 0;
+
+		finalTasks = (ArrayList<Task>) ((ArrayList<Task>) tasks).clone();	//remove tasks from final tasks until only final tasks are left
+
+		do {
+			for (Task node : tasks) {
+				if ((currentDependency == null && node.getDependencies().isEmpty()) || node.getDependencies().contains(currentDependency)) {
+					if (currentDependency != null) {
+						finalTasks.remove(currentDependency);
+					}
+					if (!dependencyQueue.contains(node)) {
+						dependencyQueue.add(node);
+					}
+					if (earliestStartTime >= node.getEarlyStart()) {
+						node.setEarlyStart(earliestStartTime);
+						node.setEarlyFinish(earliestStartTime + node.getDuration());
+
+						if (node.getEarlyFinish() > projectDuration) {
+							projectDuration = node.getEarlyFinish();
+						}
+					}
+				}
+			}
+			
+			currentDependency = dependencyQueue.poll();
+			if (currentDependency != null) {
+				earliestStartTime = currentDependency.getEarlyFinish();
+			}
+		} while (currentDependency != null);
+
+		totalDuration = projectDuration;
     }
 
     public void calculateLate() {
@@ -28,7 +68,10 @@ public class SchedulingTool {
 
     // critical path algorithm
 	public void calculateCriticalPath() {
-		//??? we need to do this as well I guess
+		List<Task> currentTasks = finalTasks;
+		for (Task task : currentTasks) {
+			//TODO: implement this
+		}
 	}
 
 	public void writeOutputs() {
@@ -43,6 +86,22 @@ public class SchedulingTool {
 		calculateCriticalPath();
 
 		writeOutputs();
+	}
+
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
+
+	public List<Task> getFinalTasks() {
+		return finalTasks;
+	}
+
+	public int getTotalDuration() {
+		return totalDuration;
 	}
 
 	/*
