@@ -1,0 +1,20 @@
+﻿#Task Dependency text sheet. 
+#Here all the dependencies are listed, with respect to the path they are on.
+
+
+
+
+Start, SR
+SR, PO
+SR, MD
+SR, CP
+SR, CV
+PO, BB
+PO, BC
+MD, BB
+CP, BC
+CV, BS
+BB, BS
+BC, PM
+BS, PM
+PM, End
