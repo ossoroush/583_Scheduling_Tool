@@ -63,6 +63,7 @@ class Test {
 		for (Task task : tool.getCriticalPath()) {
 			System.out.println(task);
 		}
+		tool.writeOutputs();
 
 	}
 }

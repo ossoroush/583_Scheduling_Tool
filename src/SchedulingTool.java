@@ -2,6 +2,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SchedulingTool {
 	// Array carrying all strings of tasks
@@ -19,6 +21,12 @@ public class SchedulingTool {
 	private List<Task> finalTasks = new ArrayList<>();
 	private List<Task> criticalPath = new ArrayList<>();
 	private int totalDuration = 0;
+	
+	private static final String COMMA_DELIMITER = ",";
+    private static final String NEW_LINE_SEPARATOR = "\n";
+    private static final String FILE_HEADER = "Task uniqueID: description" +
+            ", Top: earlyStart - duration - earlyFinish" +
+            ", Bottom: latestStart - durFloat - latestFinish";
 
 	public void readInputs(String definitionFileName, String dependencyFileName) {
 		//Populate the task array "tasks" above
@@ -85,11 +93,40 @@ public class SchedulingTool {
 		} while (criticalPathTask != null && !currentTasks.isEmpty());
 		
 	}
-
+	
 	public void writeOutputs() {
-		//javier's algorithm here
-	}
-
+        FileWriter fileWriter = null;
+                 
+        try {
+            fileWriter = new FileWriter("Sandwich_Project.csv");
+ 
+            fileWriter.append(FILE_HEADER.toString());
+            
+            fileWriter.append(NEW_LINE_SEPARATOR);
+            
+            for (Task tasks : this.tasks) {
+                fileWriter.append(tasks.toString());
+				fileWriter.append(NEW_LINE_SEPARATOR);
+            }
+             
+            System.out.println("CSV file was created successfully !!!");
+             
+        } catch (Exception e) {
+            System.out.println("Error in CsvFileWriter !!!");
+            e.printStackTrace();
+        } finally {
+             
+            try {
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                System.out.println("Error while flushing/closing fileWriter !!!");
+                e.printStackTrace();
+            }
+             
+        }
+    }
+	
 	public void runProgram(String definitionFileName, String dependencyFileName) {
 		readInputs(definitionFileName, dependencyFileName);
 
