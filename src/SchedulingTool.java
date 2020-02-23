@@ -4,6 +4,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class SchedulingTool {
 	// Array carrying all strings of tasks
@@ -30,7 +33,86 @@ public class SchedulingTool {
 
 	public void readInputs(String definitionFileName, String dependencyFileName) {
 		//Populate the task array "tasks" above
+		try (BufferedReader tasksReader = Files.newBufferedReader(Paths.get(definitionFileName))){
+			String line;
+			int lineNumber = 1;
+			while((line = tasksReader.readLine()) != null){
+				String[] attributes = line.split(",");
+				if (attributes.length != 3) {
+					System.out.println("wrong number of attributes in line " + lineNumber + ", tasks file");
+				}
+				else {
+					String uniqueID = attributes[0].trim();
+					String description = attributes[1].trim();
+					int duration;
+					try {
+						duration = Integer.parseInt(attributes[2].trim());
+						Task task = new Task(uniqueID, description, duration);
+						tasks.add(task);
+					}
+					catch (NumberFormatException e)
+					{
+						System.out.println("the duration should be an integer, line" + lineNumber + ", tasks file");
+					}
+				}
+				lineNumber++;
+			}
+		}
+
+		catch( IOException jse) {
+			System.out.println("could not find Tasks file");
+		}
+		try (BufferedReader depReader = Files.newBufferedReader(Paths.get(dependencyFileName))){
+			String line;
+			int lineNumber = 1;
+			while((line = depReader.readLine()) != null){
+				String[] attributes = line.split(",");
+				if (attributes.length != 2) {
+					System.out.println("wrong number of strings in line " + lineNumber + ", dependencies file");
+				}
+				else {
+					String dependencyID = attributes[0].trim();
+					String theTaskID = attributes[1].trim();
+					if(!(dependencyID.equals("Start") || theTaskID.equals("End"))) {
+						Task depndencyTask = searchByID(dependencyID);
+						Task theTask = searchByID(theTaskID);
+						if(depndencyTask != null && theTask != null) {
+							theTask.addToDependencies(depndencyTask);
+						}
+						else {
+							System.out.println("wrong ID in line " + lineNumber + ", dependencies file");
+						}
+					}
+				}
+				lineNumber++;
+			}
+
+			/**For testing purposes( uncomment these lines to see all tasks and their dependencies)**/
+//			for(Task task: tasks) {
+//				System.out.println(task.getUniqueID() + "," + task.getDescription() + "," + task.getDuration());
+//				List<Task> dependencies = task.getDependencies();
+//				for(Task dependency: dependencies) {
+//					System.out.print(dependency.getUniqueID()+",");
+//				}
+//				System.out.println();
+//			}
+		}
+
+		catch( IOException jse) {
+			System.out.println("could not find Dependencies file");
+		}
 	}
+
+	//takes an ID and returns the corresponding Task
+	public Task searchByID(String uniqueID) {
+		for(Task task: tasks) {
+			if(task.getUniqueID().equals(uniqueID)) {
+				return task;
+			}
+		}
+		return null;
+	}
+
 
 	//calculates earliest start/end times, populates a list of final tasks, and total duration of project
 	public void calculateEarly() {
